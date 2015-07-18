@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ShareButton">
+        <item name="android:paddingStart">@dimen/padding_share</item>
+        <item name="android:paddingEnd">@dimen/padding_share</item>
+        <item name="android:drawableStart">@android:drawable/ic_menu_share</item>
+    </style>
+
+    <style name="AboutContainer">
+        <item name="android:paddingStart">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingEnd">@dimen/activity_horizontal_margin</item>
+    </style>
+
+    <style name="MainContainer">
+        <item name="android:paddingStart">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingEnd">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginStart">@dimen/list_horizonal_margin</item>
+        <item name="android:layout_marginEnd">@dimen/list_horizonal_margin</item>
+    </style>
+
+</resources>

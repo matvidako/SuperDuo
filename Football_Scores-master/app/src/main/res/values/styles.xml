@@ -5,4 +5,22 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="ShareButton">
+        <item name="android:paddingLeft">@dimen/padding_share</item>
+        <item name="android:paddingRight">@dimen/padding_share</item>
+        <item name="android:drawableLeft">@android:drawable/ic_menu_share</item>
+    </style>
+
+    <style name="AboutContainer">
+        <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
+    </style>
+
+    <style name="MainContainer">
+        <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/list_horizonal_margin</item>
+        <item name="android:layout_marginLeft">@dimen/list_horizonal_margin</item>
+    </style>
+
 </resources>
