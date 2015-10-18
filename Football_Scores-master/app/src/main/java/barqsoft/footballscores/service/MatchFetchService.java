@@ -5,6 +5,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.ResultReceiver;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -28,18 +30,21 @@ import barqsoft.footballscores.R;
 /**
  * Created by yehya khaled on 3/2/2015.
  */
-public class myFetchService extends IntentService {
-    public static final String LOG_TAG = "myFetchService";
+public class MatchFetchService extends IntentService {
 
-    public myFetchService() {
+    public static final String LOG_TAG = "myFetchService";
+    public static final int STATUS_FINISHED = 1;
+    private ResultReceiver receiver;
+
+    public MatchFetchService() {
         super("myFetchService");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        receiver = intent.getParcelableExtra("receiver");
         getData("n2");
         getData("p2");
-
         return;
     }
 
@@ -231,10 +236,15 @@ public class myFetchService extends IntentService {
                     DatabaseContract.BASE_CONTENT_URI, insert_data);
 
             //Log.v(LOG_TAG,"Succesfully Inserted : " + String.valueOf(inserted_data));
+            reportSuccess();
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage());
         }
+    }
 
+    private void reportSuccess() {
+        Bundle bundle = new Bundle();
+        receiver.send(STATUS_FINISHED, bundle);
     }
 }
 
