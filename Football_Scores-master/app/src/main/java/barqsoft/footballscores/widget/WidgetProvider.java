@@ -26,26 +26,26 @@ public class WidgetProvider extends AppWidgetProvider {
         for(int appWidgetId : appWidgetIds) {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
             setupOnRootClick(context, remoteViews);
-            setupOnUpdateClick(context, appWidgetIds, remoteViews);
+
+            remoteViews.setTextViewText(R.id.team_home, "Home team");
+            remoteViews.setTextViewText(R.id.team_away, "Away team");
+            remoteViews.setTextViewText(R.id.score, "3 - 2");
+
             appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
         }
 
         context.startService(new Intent(context, MatchFetchService.class));
     }
 
-    private void setupOnUpdateClick(Context context, int[] appWidgetIds, RemoteViews remoteViews) {
-        Intent intent = new Intent(context, WidgetProvider.class);
-        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
-                0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        remoteViews.setOnClickPendingIntent(R.id.update, pendingIntent);
-    }
-
     private void setupOnRootClick(Context context, RemoteViews remoteViews) {
         Intent intent = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         remoteViews.setOnClickPendingIntent(R.id.widget_root, pendingIntent);
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
     }
 
 }

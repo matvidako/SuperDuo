@@ -44,4 +44,5 @@
     <string name="current_match_time">Current match time</string>
     <string name="home_team">Home team</string>
     <string name="home_team_crest">Home team crest</string>
+    <string name="widget_title">Latest result</string>
 </resources>
