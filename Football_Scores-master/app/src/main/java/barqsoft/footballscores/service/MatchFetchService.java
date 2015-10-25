@@ -122,7 +122,7 @@ public class MatchFetchService extends IntentService {
                 Log.d(LOG_TAG, "Could not connect to server.");
             }
         } catch (Exception e) {
-            Log.e(LOG_TAG, e.getMessage());
+            Log.e(LOG_TAG, e.toString());
         }
     }
 
