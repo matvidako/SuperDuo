@@ -1,13 +1,17 @@
 package barqsoft.footballscores.service;
 
 import android.app.IntentService;
+import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
+import android.os.Build;
 import android.os.ResultReceiver;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,7 +29,9 @@ import java.util.TimeZone;
 import java.util.Vector;
 
 import barqsoft.footballscores.DatabaseContract;
+import barqsoft.footballscores.MainActivity;
 import barqsoft.footballscores.R;
+import barqsoft.footballscores.widget.LatestMatchWidgetProvider;
 
 /**
  * Created by yehya khaled on 3/2/2015.
@@ -143,28 +149,26 @@ public class MatchFetchService extends IntentService {
         final String MATCH_DAY = "matchday";
 
         //Match data
-        String League = null;
+        String league = null;
         String mDate = null;
         String mTime = null;
-        String Home = null;
-        String Away = null;
-        String Home_goals = null;
-        String Away_goals = null;
+        String home = null;
+        String away = null;
+        String homeGoals = null;
+        String awayGoals = null;
         String match_id = null;
         String match_day = null;
 
-
         try {
             JSONArray matches = new JSONObject(JSONdata).getJSONArray(FIXTURES);
-
 
             //ContentValues to be inserted
             Vector<ContentValues> values = new Vector<ContentValues>(matches.length());
             for (int i = 0; i < matches.length(); i++) {
                 JSONObject match_data = matches.getJSONObject(i);
-                League = match_data.getJSONObject(LINKS).getJSONObject(SOCCER_SEASON).
+                league = match_data.getJSONObject(LINKS).getJSONObject(SOCCER_SEASON).
                         getString("href");
-                League = League.replace(SEASON_LINK, "");
+                league = league.replace(SEASON_LINK, "");
                 match_id = match_data.getJSONObject(LINKS).getJSONObject(SELF).
                         getString("href");
                 match_id = match_id.replace(MATCH_LINK, "");
@@ -196,32 +200,26 @@ public class MatchFetchService extends IntentService {
                     Log.d(LOG_TAG, "error here!");
                     Log.e(LOG_TAG, e.getMessage());
                 }
-                Home = match_data.getString(HOME_TEAM);
-                Away = match_data.getString(AWAY_TEAM);
-                Home_goals = match_data.getJSONObject(RESULT).getString(HOME_GOALS);
-                Away_goals = match_data.getJSONObject(RESULT).getString(AWAY_GOALS);
+                home = match_data.getString(HOME_TEAM);
+                away = match_data.getString(AWAY_TEAM);
+                homeGoals = match_data.getJSONObject(RESULT).getString(HOME_GOALS);
+                awayGoals = match_data.getJSONObject(RESULT).getString(AWAY_GOALS);
                 match_day = match_data.getString(MATCH_DAY);
                 ContentValues match_values = new ContentValues();
                 match_values.put(DatabaseContract.scores_table.MATCH_ID, match_id);
                 match_values.put(DatabaseContract.scores_table.DATE_COL, mDate);
                 match_values.put(DatabaseContract.scores_table.TIME_COL, mTime);
-                match_values.put(DatabaseContract.scores_table.HOME_COL, Home);
-                match_values.put(DatabaseContract.scores_table.AWAY_COL, Away);
-                match_values.put(DatabaseContract.scores_table.HOME_GOALS_COL, Home_goals);
-                match_values.put(DatabaseContract.scores_table.AWAY_GOALS_COL, Away_goals);
-                match_values.put(DatabaseContract.scores_table.LEAGUE_COL, League);
+                match_values.put(DatabaseContract.scores_table.HOME_COL, home);
+                match_values.put(DatabaseContract.scores_table.AWAY_COL, away);
+                match_values.put(DatabaseContract.scores_table.HOME_GOALS_COL, homeGoals);
+                match_values.put(DatabaseContract.scores_table.AWAY_GOALS_COL, awayGoals);
+                match_values.put(DatabaseContract.scores_table.LEAGUE_COL, league);
                 match_values.put(DatabaseContract.scores_table.MATCH_DAY, match_day);
-                //log spam
-
-                //Log.v(LOG_TAG,match_id);
-                //Log.v(LOG_TAG,mDate);
-                //Log.v(LOG_TAG,mTime);
-                //Log.v(LOG_TAG,Home);
-                //Log.v(LOG_TAG,Away);
-                //Log.v(LOG_TAG,Home_goals);
-                //Log.v(LOG_TAG,Away_goals);
-
                 values.add(match_values);
+
+                if(i == 0) {
+                    updateWidget(home, away, homeGoals, awayGoals);
+                }
             }
 
             int inserted_data = 0;
@@ -230,16 +228,28 @@ public class MatchFetchService extends IntentService {
             inserted_data = mContext.getContentResolver().bulkInsert(
                     DatabaseContract.BASE_CONTENT_URI, insert_data);
 
-            //Log.v(LOG_TAG,"Succesfully Inserted : " + String.valueOf(inserted_data));
-            reportSuccess();
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage());
         }
     }
 
-    private void reportSuccess() {
-        Bundle bundle = new Bundle();
-        receiver.send(STATUS_FINISHED, bundle);
+    private void updateWidget(String home, String away, String homeGoals, String awayGoals) {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, LatestMatchWidgetProvider.class));
+        for (int appWidgetId : appWidgetIds) {
+            RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget);
+
+            views.setTextViewText(R.id.team_home, home);
+            views.setTextViewText(R.id.team_away, away);
+            views.setTextViewText(R.id.score, homeGoals + " - " + awayGoals);
+
+            Intent launchIntent = new Intent(this, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, launchIntent, 0);
+            views.setOnClickPendingIntent(R.id.widget_root, pendingIntent);
+
+            appWidgetManager.updateAppWidget(appWidgetId, views);
+        }
     }
+
 }
 

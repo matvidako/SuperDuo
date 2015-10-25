@@ -36,8 +36,10 @@
             android:contentDescription="@string/score"
             tools:text="2 - 1"
             style="@style/WidgetText"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_weight="0"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
             android:layout_height="wrap_content" />
 
         <TextView

@@ -24,9 +24,10 @@
     </style>
 
     <style name="WidgetText">
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/primary_text_default_material_light</item>
         <item name="android:gravity">center</item>
+        <item name="android:maxLines">3</item>
     </style>
 
 </resources>

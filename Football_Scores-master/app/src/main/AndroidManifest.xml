@@ -39,7 +39,7 @@
         <receiver
             android:icon="@drawable/ic_launcher"
             android:label="@string/widget_name"
-            android:name=".widget.WidgetProvider" >
+            android:name=".widget.LatestMatchWidgetProvider" >
             <intent-filter >
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
