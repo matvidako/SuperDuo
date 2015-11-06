@@ -45,4 +45,5 @@
     <string name="home_team">Home team</string>
     <string name="home_team_crest">Home team crest</string>
     <string name="widget_title">Latest result</string>
+    <string name="auth_token" translatable="false">Your token here</string>
 </resources>
